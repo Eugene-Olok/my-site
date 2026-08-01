@@ -1,17 +1,19 @@
----
 
 ---
-
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout title="Home" description="Developer portfolio and blog.">
+  <section>
+    <h1>[YOUR NAME]</h1>
+    <p class="meta">Software developer</p>
+    <p>
+      {/* TODO: replace with your real bio */}
+      [One or two sentences about who you are, what you build, and what
+      you're currently interested in. Keep it short.]
+    </p>
+    <p>
+      <a href="/projects">→ See my projects</a><br />
+      <a href="/blog">→ Read my blog</a>
+    </p>
+  </section>
+</BaseLayout>
