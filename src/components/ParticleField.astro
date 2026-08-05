@@ -1,0 +1,158 @@
+<canvas id="particle-field" aria-hidden="true"></canvas>
+<div class="cursor-dot" aria-hidden="true"></div>
+
+<style>
+  #particle-field {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  .cursor-dot {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 18px;
+    height: 18px;
+    margin: -9px 0 0 -9px;
+    border-radius: 50%;
+    border: 1.5px solid var(--accent);
+    pointer-events: none;
+    z-index: 999;
+    transform: translate(-100px, -100px);
+    transition: transform 0.08s ease-out, opacity 0.2s ease;
+    opacity: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #particle-field,
+    .cursor-dot {
+      display: none;
+    }
+  }
+
+  @media not all and (hover: hover) and (pointer: fine) {
+    .cursor-dot {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const canPreciseHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+  if (!reduceMotion) {
+    const canvas = document.getElementById('particle-field');
+    const ctx = canvas.getContext('2d');
+
+    const PARTICLE_COUNT = 70;
+    const LINK_DISTANCE = 130;
+    const CURSOR_LINK_DISTANCE = 180;
+
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+    canvas.width = width;
+    canvas.height = height;
+
+    let particles = Array.from({ length: PARTICLE_COUNT }, () => ({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: (Math.random() - 0.5) * 0.3,
+    }));
+
+    const mouse = { x: -9999, y: -9999 };
+
+    window.addEventListener('mousemove', (e) => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+    });
+
+    window.addEventListener('resize', () => {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+      particles.forEach((p) => {
+        p.x = Math.min(p.x, width);
+        p.y = Math.min(p.y, height);
+      });
+    });
+
+    function step() {
+      for (const p of particles) {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x <= 0 || p.x >= width) p.vx *= -1;
+        if (p.y <= 0 || p.y >= height) p.vy *= -1;
+      }
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, width, height);
+
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const a = particles[i];
+          const b = particles[j];
+          const dist = Math.hypot(a.x - b.x, a.y - b.y);
+          if (dist < LINK_DISTANCE) {
+            ctx.strokeStyle = `rgba(230, 237, 243, ${1 - dist / LINK_DISTANCE})`;
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.stroke();
+          }
+        }
+
+        const distToCursor = Math.hypot(particles[i].x - mouse.x, particles[i].y - mouse.y);
+        if (distToCursor < CURSOR_LINK_DISTANCE) {
+          ctx.strokeStyle = `rgba(126, 231, 135, ${1 - distToCursor / CURSOR_LINK_DISTANCE})`;
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(mouse.x, mouse.y);
+          ctx.stroke();
+        }
+
+        ctx.fillStyle = 'rgba(230, 237, 243, 0.8)';
+        ctx.beginPath();
+        ctx.arc(particles[i].x, particles[i].y, 1.5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    let rafId = null;
+
+    function loop() {
+      step();
+      draw();
+      rafId = requestAnimationFrame(loop);
+    }
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        if (rafId) cancelAnimationFrame(rafId);
+        rafId = null;
+      } else if (!rafId) {
+        loop();
+      }
+    });
+
+    loop();
+  }
+
+  if (canPreciseHover) {
+    const dot = document.querySelector('.cursor-dot');
+    window.addEventListener('mousemove', (e) => {
+      dot.style.opacity = '1';
+      dot.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+    });
+    window.addEventListener('mouseleave', () => {
+      dot.style.opacity = '0';
+    });
+  }
+</script>

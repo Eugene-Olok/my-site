@@ -8,7 +8,8 @@
   --font-mono: ui-monospace, "SFMono-Regular", "JetBrains Mono", Menlo, Consolas, monospace;
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --radius: 6px;
-  --max-width: 720px;
+  --sidebar-width: 340px;
+  --content-max-width: 700px;
 }
 
 * { box-sizing: border-box; }
@@ -22,60 +23,143 @@ html, body {
   line-height: 1.6;
 }
 
-body {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-.site-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid var(--border);
-  font-family: var(--font-mono);
-}
-
-.site-title {
-  color: var(--accent);
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.site-header nav a {
-  color: var(--text-dim);
-  text-decoration: none;
-  margin-left: 1.25rem;
-  font-size: 0.9rem;
-}
-
-.site-header nav a:hover {
-  color: var(--text);
-}
-
-main {
-  flex: 1;
-  width: 100%;
-  max-width: var(--max-width);
-  margin: 0 auto;
-  padding: 2.5rem 1.5rem;
-}
-
-.site-footer {
-  border-top: 1px solid var(--border);
-  padding: 1.25rem 1.5rem;
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  color: var(--text-dim);
-  text-align: center;
-}
-
-a { color: var(--accent); }
+a { color: inherit; text-decoration: none; }
 
 h1, h2, h3 {
   font-family: var(--font-mono);
   line-height: 1.3;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: var(--sidebar-width) 1fr;
+  gap: 3rem;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  min-height: 100vh;
+}
+
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 3rem 0;
+}
+
+.sidebar-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  color: var(--accent);
+  font-size: 0.85rem;
+  margin: 0 0 0.25rem;
+}
+
+.sidebar-identity h1 { font-size: 1.6rem; margin: 0 0 0.25rem; }
+
+.sidebar-identity .role {
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  margin: 0 0 0.75rem;
+}
+
+.sidebar-identity .pitch {
+  font-size: 0.95rem;
+  color: var(--text-dim);
+  max-width: 32ch;
+}
+
+.side-nav ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.side-nav a {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  padding: 0.15rem 0;
+  position: relative;
+}
+
+.side-nav a .nav-index { color: var(--text-dim); font-size: 0.75rem; }
+
+.side-nav a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 0;
+  height: 1px;
+  background: var(--accent);
+  transition: width 0.2s ease;
+}
+
+.side-nav a:hover,
+.side-nav a.is-active,
+.side-nav a[aria-current="page"] { color: var(--text); }
+
+.side-nav a:hover::after,
+.side-nav a.is-active::after,
+.side-nav a[aria-current="page"]::after { width: 100%; }
+
+.socials { display: flex; gap: 1.25rem; }
+
+.socials a {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  transition: color 0.15s ease;
+}
+
+.socials a:hover { color: var(--accent); }
+
+.sidebar-footer {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-dim);
+}
+
+.content { max-width: var(--content-max-width); padding: 3rem 0 6rem; }
+
+.section { scroll-margin-top: 2rem; margin-bottom: 6rem; }
+
+.section-heading {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.section-heading .section-index {
+  font-family: var(--font-mono);
+  color: var(--accent);
+  font-size: 0.95rem;
+}
+
+.section-heading h2 { font-size: 1.4rem; margin: 0; }
+
+@media (max-width: 980px) {
+  .layout { grid-template-columns: 1fr; padding: 0 1.25rem; }
+  .sidebar { position: static; height: auto; padding: 2rem 0 1rem; }
+  .side-nav ol { flex-direction: row; flex-wrap: wrap; gap: 1rem 1.5rem; }
+  .content { max-width: 100%; padding: 1rem 0 4rem; }
 }
 
 .card {
@@ -84,7 +168,10 @@ h1, h2, h3 {
   border-radius: var(--radius);
   padding: 1.25rem;
   margin-bottom: 1rem;
+  transition: transform 0.15s ease, border-color 0.15s ease;
 }
+
+.card:hover { transform: translateY(-2px); border-color: var(--accent); }
 
 .tag {
   display: inline-block;
@@ -101,4 +188,90 @@ h1, h2, h3 {
   font-family: var(--font-mono);
   font-size: 0.85rem;
   color: var(--text-dim);
+}
+
+.experience-item {
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 2rem;
+}
+
+.experience-item:last-child { border-bottom: none; }
+
+.experience-item .dates {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--accent);
+}
+
+.skills-group { margin-bottom: 1.5rem; }
+
+.skills-group h3 {
+  font-size: 0.95rem;
+  color: var(--text-dim);
+  margin: 0 0 0.6rem;
+  font-weight: 500;
+}
+
+.case-study summary {
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--accent);
+  margin-top: 0.75rem;
+  list-style: none;
+}
+
+.case-study summary::-webkit-details-marker { display: none; }
+.case-study summary::before { content: "▸ "; }
+.case-study[open] summary::before { content: "▾ "; }
+
+.case-study .case-content {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px dashed var(--border);
+}
+
+.case-content h4 {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  margin: 0.75rem 0 0.25rem;
+}
+
+.activity-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.activity-list li {
+  font-size: 0.9rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.activity-list li:last-child { border-bottom: none; }
+
+.reveal-init {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.reveal-init.is-visible { opacity: 1; transform: translateY(0); }
+
+@media (hover: hover) and (pointer: fine) {
+  body { cursor: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-init {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
 }
