@@ -1,0 +1,188 @@
+---
+import { site } from '../data/site.js';
+---
+<button id="cmdk-trigger" class="cmdk-trigger" aria-label="Open command palette" title="Command palette (Cmd+K)">⌘K</button>
+<div id="cmdk-overlay" class="cmdk-overlay" hidden>
+  <div class="cmdk-panel" role="dialog" aria-modal="true" aria-label="Command palette">
+    <input id="cmdk-input" class="cmdk-input" type="text" placeholder="Type a command…" autocomplete="off" />
+    <ul id="cmdk-list" class="cmdk-list"></ul>
+  </div>
+</div>
+
+<style>
+  .cmdk-trigger {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    z-index: 500;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0.5rem 0.9rem;
+    background: var(--bg-elevated);
+    cursor: pointer;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+  .cmdk-trigger:hover { color: var(--accent); border-color: var(--accent); }
+
+  .cmdk-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 15vh;
+    z-index: 2000;
+  }
+
+  .cmdk-panel {
+    width: min(480px, 90vw);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+  }
+
+  .cmdk-input {
+    width: 100%;
+    padding: 1rem;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+  }
+  .cmdk-input:focus { outline: none; }
+
+  .cmdk-list {
+    list-style: none;
+    margin: 0;
+    padding: 0.5rem;
+    max-height: 320px;
+    overflow-y: auto;
+  }
+
+  .cmdk-item {
+    padding: 0.6rem 0.75rem;
+    border-radius: var(--radius);
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+  .cmdk-item.is-active { background: var(--bg); color: var(--accent); }
+  .cmdk-empty { padding: 0.6rem 0.75rem; color: var(--text-dim); font-size: 0.9rem; }
+</style>
+
+<script define:vars={{ github: site.github, linkedin: site.linkedin, email: site.email }}>
+  const commands = [
+    { label: 'Go to About', action: () => go('#about') },
+    { label: 'View all projects', action: () => go('/projects') },
+    { label: 'Go to Skills', action: () => go('#skills') },
+    { label: 'Go to GitHub Activity', action: () => go('#github') },
+    { label: 'View all posts', action: () => go('/blog') },
+    { label: 'Copy email address', action: () => copyEmail() },
+    { label: 'Open GitHub profile', action: () => window.open(github, '_blank') },
+    { label: 'Open LinkedIn profile', action: () => window.open(linkedin, '_blank') },
+    { label: 'Toggle light / dark theme', action: () => window.__toggleTheme && window.__toggleTheme() },
+  ];
+
+  function go(target) {
+    const isHome = window.location.pathname === '/';
+    if (target.startsWith('#')) {
+      window.location.href = isHome ? target : `/${target}`;
+    } else {
+      window.location.href = target;
+    }
+  }
+
+  function copyEmail() {
+    navigator.clipboard?.writeText(email).catch(() => {});
+  }
+
+  const trigger = document.getElementById('cmdk-trigger');
+  const overlay = document.getElementById('cmdk-overlay');
+  const input = document.getElementById('cmdk-input');
+  const list = document.getElementById('cmdk-list');
+  let activeIndex = 0;
+  let lastFocused = null;
+  let currentMatches = commands;
+
+  function render(filter = '') {
+    const matches = commands.filter((c) => c.label.toLowerCase().includes(filter.toLowerCase()));
+    list.innerHTML =
+      matches
+        .map((c, i) => `<li class="cmdk-item${i === activeIndex ? ' is-active' : ''}" data-index="${i}">${c.label}</li>`)
+        .join('') || '<li class="cmdk-empty">No matching commands</li>';
+    currentMatches = matches;
+    return matches;
+  }
+
+  function open() {
+    lastFocused = document.activeElement;
+    overlay.hidden = false;
+    input.value = '';
+    activeIndex = 0;
+    render();
+    input.focus();
+  }
+
+  function close() {
+    overlay.hidden = true;
+    if (lastFocused) lastFocused.focus();
+  }
+
+  function runActive() {
+    const cmd = currentMatches[activeIndex];
+    if (cmd) {
+      close();
+      cmd.action();
+    }
+  }
+
+  trigger.addEventListener('click', open);
+
+  document.addEventListener('keydown', (e) => {
+    const isK = e.key === 'k' || e.key === 'K';
+    if ((e.metaKey || e.ctrlKey) && isK) {
+      e.preventDefault();
+      overlay.hidden ? open() : close();
+    }
+    if (!overlay.hidden && e.key === 'Escape') close();
+  });
+
+  input.addEventListener('input', () => {
+    activeIndex = 0;
+    render(input.value);
+  });
+
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      activeIndex = Math.min(activeIndex + 1, currentMatches.length - 1);
+      render(input.value);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      activeIndex = Math.max(activeIndex - 1, 0);
+      render(input.value);
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      runActive();
+    }
+  });
+
+  list.addEventListener('click', (e) => {
+    const item = e.target.closest('.cmdk-item');
+    if (item) {
+      activeIndex = Number(item.dataset.index);
+      runActive();
+    }
+  });
+
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) close();
+  });
+</script>

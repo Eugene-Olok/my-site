@@ -16,6 +16,7 @@ const { Content } = await render(post);
 const { minutes } = getReadingTime(post.body ?? '');
 ---
 <BaseLayout title={post.data.title} description={post.data.description}>
+  <div id="reading-progress" class="reading-progress"></div>
   <article>
     <h1>{post.data.title}</h1>
     <p class="meta">
@@ -28,3 +29,21 @@ const { minutes } = getReadingTime(post.body ?? '');
     <Content />
   </article>
 </BaseLayout>
+
+<script>
+  const bar = document.getElementById('reading-progress');
+  const article = document.querySelector('article');
+  if (bar && article) {
+    function update() {
+      const rect = article.getBoundingClientRect();
+      const articleTop = rect.top + window.scrollY;
+      const articleHeight = article.offsetHeight;
+      const viewportHeight = window.innerHeight;
+      const scrolled = window.scrollY - articleTop + viewportHeight * 0.3;
+      const progress = Math.min(1, Math.max(0, scrolled / articleHeight));
+      bar.style.width = `${progress * 100}%`;
+    }
+    document.addEventListener('scroll', update, { passive: true });
+    update();
+  }
+</script>

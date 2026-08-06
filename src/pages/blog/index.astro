@@ -6,24 +6,39 @@ import { getReadingTime } from '../../utils/reading-time.js';
 const posts = (await getCollection('blog')).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
 );
+const allTags = [...new Set(posts.flatMap((p) => p.data.tags))].sort();
 ---
 <BaseLayout title="Blog" description="Posts on things I'm building and learning.">
   <h1>Blog</h1>
   {posts.length === 0 && <p class="meta">No posts yet.</p>}
-  {posts.map((post) => {
-    const { minutes } = getReadingTime(post.body ?? '');
-    return (
-      <div class="card">
-        <h2><a href={`/blog/${post.id}/`}>{post.data.title}</a></h2>
-        <p class="meta">
-          {post.data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
-          {' · '}{minutes} min read
-        </p>
-        <p>{post.data.description}</p>
-        <div>
-          {post.data.tags.map((tag) => <span class="tag">{tag}</span>)}
+  {posts.length > 0 && allTags.length > 0 && (
+    <div class="tag-filter" id="tag-filter">
+      <button class="tag-filter-btn is-active" data-tag-filter="all">All</button>
+      {allTags.map((tag) => (
+        <button class="tag-filter-btn" data-tag-filter={tag}>{tag}</button>
+      ))}
+    </div>
+  )}
+  <div class="gallery-grid">
+    {posts.map((post) => {
+      const { minutes } = getReadingTime(post.body ?? '');
+      return (
+        <div class="card filterable-card" data-tags={post.data.tags.join(',')}>
+          <h2><a href={`/blog/${post.id}/`}>{post.data.title}</a></h2>
+          <p class="meta">
+            {post.data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+            {' · '}{minutes} min read
+          </p>
+          <p>{post.data.description}</p>
+          <div>{post.data.tags.map((tag) => <span class="tag">{tag}</span>)}</div>
         </div>
-      </div>
-    );
-  })}
+      );
+    })}
+  </div>
 </BaseLayout>
+
+<script>
+  import { initTagFilter } from '../../scripts/tag-filter.js';
+  const filterBar = document.getElementById('tag-filter');
+  if (filterBar) initTagFilter(filterBar);
+</script>

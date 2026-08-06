@@ -1,0 +1,27 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { projects } from '../data/projects.js';
+
+const allTags = [...new Set(projects.flatMap((p) => p.stack))].sort();
+---
+<BaseLayout title="Projects" description="All projects.">
+  <h1>All Projects</h1>
+  {allTags.length > 0 && (
+    <div class="tag-filter" id="tag-filter">
+      <button class="tag-filter-btn is-active" data-tag-filter="all">All</button>
+      {allTags.map((tag) => (
+        <button class="tag-filter-btn" data-tag-filter={tag}>{tag}</button>
+      ))}
+    </div>
+  )}
+  <div class="gallery-grid">
+    {projects.map((project) => <ProjectCard project={project} />)}
+  </div>
+</BaseLayout>
+
+<script>
+  import { initTagFilter } from '../scripts/tag-filter.js';
+  const filterBar = document.getElementById('tag-filter');
+  if (filterBar) initTagFilter(filterBar);
+</script>
