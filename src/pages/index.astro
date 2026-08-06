@@ -6,31 +6,14 @@ const recentPosts = (await getCollection('blog'))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .slice(0, 3);
 
-// TODO: replace with your real experience. Newest first.
-const experience = [
-  {
-    role: "[Job Title]",
-    company: "[Company Name]",
-    dates: "[Start] — [End]",
-    description: "[One or two sentences about scope and impact in this role.]",
-    tags: ["[Tech]", "[Tech]"],
-  },
-  {
-    role: "[Previous Job Title]",
-    company: "[Previous Company]",
-    dates: "[Start] — [End]",
-    description: "[One or two sentences about scope and impact in this role.]",
-    tags: ["[Tech]", "[Tech]"],
-  },
-];
-
 // TODO: replace with your real projects.
 const projects = [
   {
     title: "[Project One]",
     description: "[One-line description of what it does and why it exists.]",
     stack: ["TypeScript", "Astro"],
-    link: "https://github.com/[you]/[project-one]",
+    liveUrl: "https://[project-one-live-url]",
+    repoUrl: "https://github.com/[you]/[project-one]",
     problem: "[What problem was this solving?]",
     approach: "[How did you approach building it?]",
     learnings: "[What would you do differently, or what did you learn?]",
@@ -39,7 +22,8 @@ const projects = [
     title: "[Project Two]",
     description: "[One-line description of what it does and why it exists.]",
     stack: ["Node.js", "PostgreSQL"],
-    link: "https://github.com/[you]/[project-two]",
+    liveUrl: "https://[project-two-live-url]",
+    repoUrl: "https://github.com/[you]/[project-two]",
     problem: "[What problem was this solving?]",
     approach: "[How did you approach building it?]",
     learnings: "[What would you do differently, or what did you learn?]",
@@ -48,19 +32,11 @@ const projects = [
     title: "[Project Three]",
     description: "[One-line description of what it does and why it exists.]",
     stack: ["Python"],
-    link: "https://github.com/[you]/[project-three]",
+    liveUrl: "https://[project-three-live-url]",
+    repoUrl: "https://github.com/[you]/[project-three]",
     problem: "[What problem was this solving?]",
     approach: "[How did you approach building it?]",
     learnings: "[What would you do differently, or what did you learn?]",
-  },
-];
-
-// TODO: replace with your real education.
-const education = [
-  {
-    school: "[University Name]",
-    degree: "[Degree, Field of Study]",
-    dates: "[Start] — [End]",
   },
 ];
 
@@ -85,25 +61,23 @@ const GITHUB_USERNAME = ""; // e.g. "octocat"
     </p>
   </section>
 
-  <section id="experience" class="section" data-reveal>
-    <div class="section-heading"><span class="section-index">02</span><h2>Experience</h2></div>
-    {experience.map((job) => (
-      <div class="experience-item">
-        <p class="dates">{job.dates}</p>
-        <h3>{job.role} · {job.company}</h3>
-        <p>{job.description}</p>
-        <div>{job.tags.map((tag) => <span class="tag">{tag}</span>)}</div>
-      </div>
-    ))}
-  </section>
-
   <section id="projects" class="section" data-reveal>
-    <div class="section-heading"><span class="section-index">03</span><h2>Projects</h2></div>
+    <div class="section-heading"><span class="section-index">02</span><h2>Projects</h2></div>
     {projects.map((project) => (
       <div class="card">
-        <h3><a href={project.link} target="_blank" rel="noopener noreferrer">{project.title}</a></h3>
+        <h3>{project.title}</h3>
         <p>{project.description}</p>
         <div>{project.stack.map((tech) => <span class="tag">{tech}</span>)}</div>
+        <div class="project-links">
+          <a class="project-link" href={project.liveUrl} target="_blank" rel="noopener noreferrer">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><path d="M15 3h6v6"/><path d="M10 14L21 3"/></svg>
+            Live site
+          </a>
+          <a class="project-link" href={project.repoUrl} target="_blank" rel="noopener noreferrer">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+            View code
+          </a>
+        </div>
         <details class="case-study">
           <summary>Case study</summary>
           <div class="case-content">
@@ -119,19 +93,8 @@ const GITHUB_USERNAME = ""; // e.g. "octocat"
     ))}
   </section>
 
-  <section id="education" class="section" data-reveal>
-    <div class="section-heading"><span class="section-index">04</span><h2>Education</h2></div>
-    {education.map((entry) => (
-      <div class="experience-item">
-        <p class="dates">{entry.dates}</p>
-        <h3>{entry.school}</h3>
-        <p>{entry.degree}</p>
-      </div>
-    ))}
-  </section>
-
   <section id="skills" class="section" data-reveal>
-    <div class="section-heading"><span class="section-index">05</span><h2>Skills</h2></div>
+    <div class="section-heading"><span class="section-index">03</span><h2>Skills</h2></div>
     {skillGroups.map((group) => (
       <div class="skills-group">
         <h3>{group.category}</h3>
@@ -141,14 +104,14 @@ const GITHUB_USERNAME = ""; // e.g. "octocat"
   </section>
 
   <section id="github" class="section" data-reveal>
-    <div class="section-heading"><span class="section-index">06</span><h2>GitHub Activity</h2></div>
-    <ul class="activity-list" id="github-activity" data-username={GITHUB_USERNAME}>
-      <li>Loading recent activity…</li>
+    <div class="section-heading"><span class="section-index">04</span><h2>GitHub Activity</h2></div>
+    <ul class="activity-feed" id="github-activity" data-username={GITHUB_USERNAME}>
+      <li class="activity-item"><div class="activity-text">Loading recent activity…</div></li>
     </ul>
   </section>
 
   <section id="blog" class="section" data-reveal>
-    <div class="section-heading"><span class="section-index">07</span><h2>Blog</h2></div>
+    <div class="section-heading"><span class="section-index">05</span><h2>Blog</h2></div>
     {recentPosts.length === 0 && <p class="meta">No posts yet.</p>}
     {recentPosts.map((post) => (
       <div class="card">
@@ -167,7 +130,16 @@ const GITHUB_USERNAME = ""; // e.g. "octocat"
   const list = document.getElementById('github-activity');
   const username = list?.dataset.username;
 
-  const EVENT_LABELS = {
+  const ICONS = {
+    PushEvent: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>',
+    PullRequestEvent: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="6" cy="6" r="2"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="M6 8v8M18 8v4a4 4 0 01-4 4h-2"/></svg>',
+    IssuesEvent: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>',
+    CreateEvent: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>',
+    WatchEvent: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9 7.1.6-5.4 4.7 1.6 7-6.2-3.9L6 21.2l1.6-7L2.2 9.5l7.1-.6z"/></svg>',
+    ForkEvent: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="12" cy="18" r="2"/><path d="M6 8v2a4 4 0 004 4M18 8v2a4 4 0 01-4 4"/></svg>',
+  };
+
+  const LABELS = {
     PushEvent: 'pushed to',
     PullRequestEvent: 'opened a pull request in',
     IssuesEvent: 'opened an issue in',
@@ -176,9 +148,22 @@ const GITHUB_USERNAME = ""; // e.g. "octocat"
     ForkEvent: 'forked',
   };
 
+  function timeAgo(dateStr) {
+    const time = new Date(dateStr).getTime();
+    if (Number.isNaN(time)) return '';
+    const diffMs = Date.now() - time;
+    const mins = Math.floor(diffMs / 60000);
+    if (mins < 60) return `${mins}m ago`;
+    const hours = Math.floor(mins / 60);
+    if (hours < 24) return `${hours}h ago`;
+    const days = Math.floor(hours / 24);
+    if (days < 30) return `${days}d ago`;
+    return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  }
+
   async function loadActivity() {
     if (!username) {
-      list.innerHTML = '<li>Add your GitHub username in src/pages/index.astro (GITHUB_USERNAME) to enable this section.</li>';
+      list.innerHTML = '<li class="activity-item"><div class="activity-text">Add your GitHub username in src/pages/index.astro (GITHUB_USERNAME) to enable this section.</div></li>';
       return;
     }
     try {
@@ -187,19 +172,26 @@ const GITHUB_USERNAME = ""; // e.g. "octocat"
       const events = await res.json();
       const recent = events.slice(0, 5);
       if (!recent.length) {
-        list.innerHTML = '<li>No recent public activity.</li>';
+        list.innerHTML = '<li class="activity-item"><div class="activity-text">No recent public activity.</div></li>';
         return;
       }
       list.innerHTML = recent
         .map((event) => {
-          const label = EVENT_LABELS[event.type] || event.type;
+          const icon = ICONS[event.type] || ICONS.CreateEvent;
+          const label = LABELS[event.type] || event.type;
           const repo = event.repo?.name || '';
           const url = repo ? `https://github.com/${repo}` : '#';
-          return `<li><a href="${url}" target="_blank" rel="noopener noreferrer">${label} ${repo}</a></li>`;
+          return `<li class="activity-item">
+            <div class="activity-icon">${icon}</div>
+            <div class="activity-text">
+              <a href="${url}" target="_blank" rel="noopener noreferrer">${label} ${repo}</a>
+              <span class="activity-time">${timeAgo(event.created_at)}</span>
+            </div>
+          </li>`;
         })
         .join('');
     } catch (err) {
-      list.innerHTML = "<li>Couldn't load GitHub activity right now — check the username or try again later.</li>";
+      list.innerHTML = "<li class=\"activity-item\"><div class=\"activity-text\">Couldn't load GitHub activity right now — check the username or try again later.</div></li>";
     }
   }
 
