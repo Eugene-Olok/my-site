@@ -1,8 +1,8 @@
 export const site = {
-  name: "[YOUR NAME]",
-  title: "[Your Title]",
-  pitch: "[One-line pitch about what you build.]",
-  email: "[you@example.com]",
+  name: "Eugene Olok",
+  title: "Full Stack Engineer",
+  pitch: "Crafting resilient backends and polished user experiences from Uganda that solve real-world problems.",
+  email: "eugeneolok@gmail.com",
   github: "https://github.com/[you]",
   linkedin: "https://linkedin.com/in/[you]",
   x: "https://x.com/[you]",

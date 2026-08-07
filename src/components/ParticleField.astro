@@ -5,17 +5,23 @@
 <style>
   #particle-field {
     position: fixed;
-    inset: 0;
-    z-index: -1;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1; /* Puts stars in the background */
     pointer-events: none;
   }
 
   .cursor-spotlight {
     position: fixed;
-    inset: 0;
-    z-index: -1;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 2; /* Sits just above stars, below layout */
     pointer-events: none;
-    background: radial-gradient(600px circle at var(--spot-x, 50%) var(--spot-y, -100%), rgba(var(--accent-rgb), 0.10), transparent 45%);
+    background: radial-gradient(circle 600px at var(--spot-x, 50vw) var(--spot-y, 50vh), rgba(var(--accent-rgb), 0.08), rgba(var(--accent-rgb), 0) 45%);
   }
 
   .cursor-dot {
@@ -28,7 +34,7 @@
     border-radius: 50%;
     border: 1.5px solid var(--accent);
     pointer-events: none;
-    z-index: 999;
+    z-index: 9999; /* Dot stays on top of everything */
     transform: translate(-100px, -100px);
     transition: transform 0.08s ease-out, opacity 0.2s ease;
     opacity: 0;
@@ -71,9 +77,9 @@
     const canvas = document.getElementById('particle-field');
     const ctx = canvas.getContext('2d');
 
-    const PARTICLE_COUNT = 70;
-    const LINK_DISTANCE = 130;
-    const CURSOR_LINK_DISTANCE = 180;
+    const PARTICLE_COUNT = 150;
+    const LINK_DISTANCE = 100;
+    const CURSOR_LINK_DISTANCE = 200;
 
     let width = window.innerWidth;
     let height = window.innerHeight;
@@ -96,15 +102,20 @@
       document.documentElement.style.setProperty('--spot-y', `${e.clientY}px`);
     });
 
+    // FIX: Scale particles proportionally on resize instead of clamping them
     window.addEventListener('resize', () => {
-      width = window.innerWidth;
-      height = window.innerHeight;
+      const newWidth = window.innerWidth;
+      const newHeight = window.innerHeight;
+
+      particles.forEach((p) => {
+        p.x = (p.x / width) * newWidth;
+        p.y = (p.y / height) * newHeight;
+      });
+
+      width = newWidth;
+      height = newHeight;
       canvas.width = width;
       canvas.height = height;
-      particles.forEach((p) => {
-        p.x = Math.min(p.x, width);
-        p.y = Math.min(p.y, height);
-      });
     });
 
     function step() {
@@ -120,33 +131,29 @@
       ctx.clearRect(0, 0, width, height);
 
       for (let i = 0; i < particles.length; i++) {
+        const distToCursorI = Math.hypot(particles[i].x - mouse.x, particles[i].y - mouse.y);
+        
         for (let j = i + 1; j < particles.length; j++) {
-          const a = particles[i];
-          const b = particles[j];
-          const dist = Math.hypot(a.x - b.x, a.y - b.y);
-          if (dist < LINK_DISTANCE) {
-            ctx.strokeStyle = `rgba(${colors.dot}, ${1 - dist / LINK_DISTANCE})`;
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(a.x, a.y);
-            ctx.lineTo(b.x, b.y);
-            ctx.stroke();
+          const distToCursorJ = Math.hypot(particles[j].x - mouse.x, particles[j].y - mouse.y);
+          
+          if (distToCursorI < CURSOR_LINK_DISTANCE && distToCursorJ < CURSOR_LINK_DISTANCE) {
+             const distParticles = Math.hypot(particles[i].x - particles[j].x, particles[i].y - particles[j].y);
+             
+             if (distParticles < LINK_DISTANCE) {
+                const opacity = (1 - distParticles / LINK_DISTANCE) * (1 - Math.max(distToCursorI, distToCursorJ) / CURSOR_LINK_DISTANCE);
+                ctx.strokeStyle = `rgba(${colors.link}, ${opacity})`;
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(particles[i].x, particles[i].y);
+                ctx.lineTo(particles[j].x, particles[j].y);
+                ctx.stroke();
+             }
           }
         }
 
-        const distToCursor = Math.hypot(particles[i].x - mouse.x, particles[i].y - mouse.y);
-        if (distToCursor < CURSOR_LINK_DISTANCE) {
-          ctx.strokeStyle = `rgba(${colors.link}, ${1 - distToCursor / CURSOR_LINK_DISTANCE})`;
-          ctx.lineWidth = 1;
-          ctx.beginPath();
-          ctx.moveTo(particles[i].x, particles[i].y);
-          ctx.lineTo(mouse.x, mouse.y);
-          ctx.stroke();
-        }
-
-        ctx.fillStyle = `rgba(${colors.dot}, 0.8)`;
+        ctx.fillStyle = `rgba(${colors.dot}, 0.6)`;
         ctx.beginPath();
-        ctx.arc(particles[i].x, particles[i].y, 1.5, 0, Math.PI * 2);
+        ctx.arc(particles[i].x, particles[i].y, 1.2, 0, Math.PI * 2);
         ctx.fill();
       }
     }

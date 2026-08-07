@@ -1,5 +1,6 @@
-// TODO: replace with your real projects. `featured: true` shows on Home;
+// TODO: replace with your real projects. featured: true shows on Home;
 // every project (featured or not) appears on /projects.
+
 export const projects = [
   {
     title: "[Project One]",
@@ -10,8 +11,9 @@ export const projects = [
     problem: "[What problem was this solving?]",
     approach: "[How did you approach building it?]",
     learnings: "[What would you do differently, or what did you learn?]",
-    image: null, // e.g. "/images/projects/project-one.png"
+    image: null,
     featured: true,
+    slug: "project-one",
   },
   {
     title: "[Project Two]",
@@ -24,6 +26,7 @@ export const projects = [
     learnings: "[What would you do differently, or what did you learn?]",
     image: null,
     featured: true,
+    slug: "project-two",
   },
   {
     title: "[Project Three]",
@@ -36,5 +39,6 @@ export const projects = [
     learnings: "[What would you do differently, or what did you learn?]",
     image: null,
     featured: false,
+    slug: "project-three",
   },
 ];

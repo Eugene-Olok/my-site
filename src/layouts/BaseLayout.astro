@@ -10,7 +10,7 @@ const isHome = Astro.url.pathname === '/';
 
 const navItems = [
   { type: 'anchor', id: 'about', label: 'About', index: '01' },
-  { type: 'page', href: '/projects', label: 'Projects', index: '02', matchPrefix: '/projects' },
+  { type: 'anchor', id: 'projects', label: 'Projects', index: '02' },
   { type: 'anchor', id: 'skills', label: 'Skills', index: '03' },
   { type: 'anchor', id: 'github', label: 'GitHub Activity', index: '04' },
   { type: 'page', href: '/blog', label: 'Blog', index: '05', matchPrefix: '/blog' },

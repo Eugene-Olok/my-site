@@ -7,6 +7,10 @@ const { project } = Astro.props;
   <p>{project.description}</p>
   <div>{project.stack.map((tech) => <span class="tag">{tech}</span>)}</div>
   <div class="project-links">
+    <a class="project-link" href={`/projects/${project.slug}`}>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6M9 17h6"/></svg>
+      Case study
+    </a>
     <a class="project-link" href={project.liveUrl} target="_blank" rel="noopener noreferrer">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><path d="M15 3h6v6"/><path d="M10 14L21 3"/></svg>
       Live site
@@ -16,15 +20,4 @@ const { project } = Astro.props;
       View code
     </a>
   </div>
-  <details class="case-study">
-    <summary>Case study</summary>
-    <div class="case-content">
-      <h4>Problem</h4>
-      <p>{project.problem}</p>
-      <h4>Approach</h4>
-      <p>{project.approach}</p>
-      <h4>Learnings</h4>
-      <p>{project.learnings}</p>
-    </div>
-  </details>
 </div>
