@@ -14,17 +14,17 @@ const allTags = [...new Set(projects.flatMap((p) => p.stack))].sort();
       ))}
     </div>
   )}
-  <div class="project-list">
+  <div class="row-list">
     {projects.map((project) => (
-      <div class="project-row filterable-card" data-tags={project.stack.join(',')}>
-        <div class="project-row-main">
-          <h2 class="project-row-title">{project.title}</h2>
-          <p class="project-row-desc">{project.description}</p>
-          <div class="project-row-tags">
+      <div class="row-item filterable-card" data-tags={project.stack.join(',')}>
+        <div class="row-item-main">
+          <h2 class="row-item-title">{project.title}</h2>
+          <p class="row-item-desc">{project.description}</p>
+          <div class="row-item-tags">
             {project.stack.map((tech) => <span class="tag">{tech}</span>)}
           </div>
         </div>
-        <div class="project-row-links">
+        <div class="row-item-links">
           <a href={`/projects/${project.slug}`} aria-label={`${project.title} case study`} title="Case study">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6M9 17h6"/></svg>
           </a>
