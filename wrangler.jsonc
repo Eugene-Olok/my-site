@@ -1,12 +1,9 @@
 {
-	"$schema": "./node_modules/wrangler/config-schema.json",
-	"compatibility_date": "2026-08-07",
-	"compatibility_flags": ["global_fetch_strictly_public"],
-	"name": "my-site",
-	"assets": {
-		"directory": "./dist"
-	},
-	"observability": {
-		"enabled": true
-	}
+    "$schema": "./node_modules/wrangler/config-schema.json",
+    "compatibility_date": "2026-08-07",
+    "name": "my-site",
+    "pages_build_output_dir": "./dist",
+    "observability": {
+        "enabled": true
+    }
 }
